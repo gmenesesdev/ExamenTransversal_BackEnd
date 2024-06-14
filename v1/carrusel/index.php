@@ -44,12 +44,12 @@ if ($_version == 'v1') {
                     $rs = $control->postNew($objeto);
                     if ($rs) {
                         http_response_code(201);
-                        echo json_encode(["data" => "Carrusel creado"]);
-                    } else if ($rs == false) {
-                        echo "ID ya existe";
+                        echo json_encode(["data" => $rs]);
+                    } else if ($rs === false) {
+                        echo "ID repetido";
                     } else {
-                        http_response_code(409);
                         echo json_encode(["Error" => "Error al crear Carrusel"]);
+                        http_response_code(409);
                     }
                 } else {
                     http_response_code(401);
@@ -85,26 +85,32 @@ if ($_version == 'v1') {
                 break;
 
             case 'PUT':
-                if ($header == $token_put) {
+                if ($_header == $_token_put) {
                     include_once 'controller.php';
                     include_once '../conexion.php';
                     $control = new Controlador();
                     $objeto = json_decode(file_get_contents("php://input", true));
-                    if ($objeto->imagen && !$objeto->titulo && !$objeto->descripcion) {
-                        $rs = $control->putImagenByID($objeto->imagen, $objeto->id);
-                        http_response_code(200);
-                        echo json_encode(["data" => $rs]);
-                    } else if (!$objeto->imagen && $objeto->titulo && !$objeto->descripcion) {
-                        $rs = $control->putTituloByID($objeto->titulo, $objeto->id);
-                        http_response_code(200);
-                        echo json_encode(["data" => $rs]);
-                    } else if (!$objeto->imagen && !$objeto->titulo && $objeto->descripcion) {
-                        $rs = $control->putDescripcionByID($objeto->descripcion, $objeto->id);
-                        http_response_code(200);
-                        echo json_encode(["data" => $rs]);
-                    } else {
-                        http_response_code(400);
-                        echo json_encode(["Error" => "Error con parametros"]);
+                    var_dump($objeto);
+                    switch (true) {
+                        case property_exists($objeto, 'imagen') && $objeto->imagen:
+                            $rs = $control->putImagenByID($objeto->imagen, $objeto->id);
+                            http_response_code(200);
+                            echo json_encode(["data" => $rs]);
+                            break;
+                        case property_exists($objeto, 'titulo') && $objeto->titulo:
+                            $rs = $control->putTituloByID($objeto->titulo, $objeto->id);
+                            http_response_code(200);
+                            echo json_encode(["data" => $rs]);
+                            break;
+                        case property_exists($objeto, 'descripcion') && $objeto->descripcion:
+                            $rs = $control->putDescripcionByID($objeto->descripcion, $objeto->id);
+                            http_response_code(200);
+                            echo json_encode(["data" => $rs]);
+                            break;
+                        default:
+                            http_response_code(400);
+                            echo json_encode(["Error" => "Error con parametros"]);
+                            break;
                     }
                 } else {
                     http_response_code(401);

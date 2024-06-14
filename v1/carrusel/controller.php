@@ -44,7 +44,7 @@ class Controlador
         $con = new Conexion();
         $ids = array_column($this->getAll(), 'id');
         $id = $ids ? max($ids) + 1 : 1;
-        $sql = "INSERT INTO carrusel (id, imagen, titulo, descripcion, activo) VALUES ($id, '$_objeto->imagen', '$_objeto->titulo', '$_objeto->descripcion', $_objeto->activo ? 1 : 0);";
+        $sql = "INSERT INTO carrusel (id, imagen, titulo, descripcion, activo) VALUES ($id, '$_objeto->imagen', '$_objeto->titulo', '$_objeto->descripcion', '$_objeto->activo ? 1 : 0');";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -62,6 +62,7 @@ class Controlador
     {
         $con = new Conexion();
         $sql = "UPDATE carrusel SET activo = $_accion WHERE id = $_id;";
+        var_dump($sql);
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
