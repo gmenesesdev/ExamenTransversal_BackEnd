@@ -1,6 +1,8 @@
 <?php
-/*-- Carrusel 
-SELECT id, imagen, titulo, descripcion, activo FROM carrusel;
+
+/*
+-- redes-sociales
+SELECT id, nombre, icono, valor, activo FROM redes_sociales;
 */
 class Controlador
 {
@@ -11,28 +13,27 @@ class Controlador
         $this->lista = [];
     }
 
-    // Obtener todos los datos de carusel
     public function getAll()
     {
         $con = new Conexion();
         $conn = $con->getConnection();
-        $sql = 'SELECT id, imagen, titulo, descripcion, activo FROM	carrusel;';
+        $sql = 'SELECT id, nombre, icono, valor, activo FROM redes_sociales;';
         $result = mysqli_query($conn, $sql);
-        if ($result) {
-            $carrusel = [];
-            while ($row = mysqli_fetch_assoc($result)) {
-                $carrusel_id = $row['id'];
-                if (!isset($carrusel[$carrusel_id])) {
-                    $carrusel[$carrusel_id] = [
+        if($result){
+            $redes = [];
+            while($row = mysqli_fetch_assoc($result)){
+                $redes_id = $row['id'];
+                if(!isset($redes[$redes_id])){
+                    $redes[$redes_id] = [
                         "id" => $row["id"],
-                        "imagen" => $row["imagen"],
-                        "titulo" => $row["titulo"],
-                        "descripcion" => $row["descripcion"],
+                        "nombre" => $row["nombre"],
+                        "icono" => $row["icono"],
+                        "valor" => $row["valor"],
                         "activo" => $row["activo"] == 1 ? true : false
                     ];
                 }
             }
-            $this->lista = array_values($carrusel);
+            $this->lista = array_values($redes);
             mysqli_free_result($result);
         }
         $con->closeConnection();
@@ -44,7 +45,11 @@ class Controlador
         $con = new Conexion();
         $ids = array_column($this->getAll(), 'id');
         $id = $ids ? max($ids) + 1 : 1;
-        $sql = "INSERT INTO carrusel (id, imagen, titulo, descripcion, activo) VALUES ($id, '$_objeto->imagen', '$_objeto->titulo', '$_objeto->descripcion', $_objeto->activo ? 1 : 0);";
+        $nombre = $_objeto->nombre;
+        $icono = $_objeto->icono;
+        $valor = $_objeto->valor;
+        $activo = $_objeto->activo ? 1 : 0;
+        $sql = "INSERT INTO redes_sociales (id, nombre, icono, valor, activo) VALUES ($id, '$nombre', '$icono', $valor, $activo);";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -57,11 +62,11 @@ class Controlador
         }
         return null;
     }
-    
+
     public function patchOnOff($_id, $_accion)
     {
         $con = new Conexion();
-        $sql = "UPDATE carrusel SET activo = $_accion WHERE id = $_id;";
+        $sql = "UPDATE redes_sociales SET activo = $_accion WHERE id = $_id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -75,10 +80,10 @@ class Controlador
         return null;
     }
 
-    public function putImagenByID($imagen, $id)
+    public function putNombreByID($nombre, $id)
     {
         $con = new Conexion();
-        $sql = "UPDATE carrusel SET imagen = '$imagen' WHERE id = $id;";
+        $sql = "UPDATE redes_sociales SET nombre = '$nombre' WHERE id = $id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -92,10 +97,10 @@ class Controlador
         return null;
     }
 
-    public function putTituloByID($titulo, $id)
+    public function putIconoByID($icono, $id)
     {
         $con = new Conexion();
-        $sql = "UPDATE carrusel SET titulo = '$titulo' WHERE id = $id;";
+        $sql = "UPDATE redes_sociales SET icono = '$icono' WHERE id = $id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -109,10 +114,10 @@ class Controlador
         return null;
     }
 
-    public function putDescripcionByID($descripcion, $id)
+    public function putValorByID($valor, $id)
     {
         $con = new Conexion();
-        $sql = "UPDATE carrusel SET descripcion = '$descripcion' WHERE id = $id;";
+        $sql = "UPDATE redes_sociales SET valor = $valor WHERE id = $id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -126,10 +131,10 @@ class Controlador
         return null;
     }
 
-    public function putAll($id, $imagen, $titulo, $descripcion)
+    public function putAll($id, $nombre, $icono, $valor)
     {
         $con = new Conexion();
-        $sql = "UPDATE carrusel SET imagen = '$imagen', titulo = '$titulo', descripcion = '$descripcion', activo WHERE id = $id;";
+        $sql = "UPDATE redes_sociales SET nombre = '$nombre', icono = '$icono', valor = $valor WHERE id = $id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -146,7 +151,7 @@ class Controlador
     public function deleteByID($id)
     {
         $con = new Conexion();
-        $sql = "DELETE FROM carrusel WHERE id = $id;";
+        $sql = "DELETE FROM redes_sociales WHERE id = $id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);

@@ -1,6 +1,6 @@
 <?php
-/*-- Carrusel 
-SELECT id, imagen, titulo, descripcion, activo FROM carrusel;
+/*-- nuestra-historia 
+SELECT id, texto, activo FROM nuestra_historia;
 */
 class Controlador
 {
@@ -11,28 +11,25 @@ class Controlador
         $this->lista = [];
     }
 
-    // Obtener todos los datos de carusel
     public function getAll()
     {
         $con = new Conexion();
         $conn = $con->getConnection();
-        $sql = 'SELECT id, imagen, titulo, descripcion, activo FROM	carrusel;';
+        $sql = 'SELECT id, texto, activo FROM nuestra_historia;';
         $result = mysqli_query($conn, $sql);
         if ($result) {
-            $carrusel = [];
+            $historia = [];
             while ($row = mysqli_fetch_assoc($result)) {
-                $carrusel_id = $row['id'];
-                if (!isset($carrusel[$carrusel_id])) {
-                    $carrusel[$carrusel_id] = [
+                $historia_id = $row['id'];
+                if (!isset($historia[$historia_id])) {
+                    $historia[$historia_id] = [
                         "id" => $row["id"],
-                        "imagen" => $row["imagen"],
-                        "titulo" => $row["titulo"],
-                        "descripcion" => $row["descripcion"],
+                        "texto" => $row["texto"],
                         "activo" => $row["activo"] == 1 ? true : false
                     ];
                 }
             }
-            $this->lista = array_values($carrusel);
+            $this->lista = array_values($historia);
             mysqli_free_result($result);
         }
         $con->closeConnection();
@@ -44,24 +41,7 @@ class Controlador
         $con = new Conexion();
         $ids = array_column($this->getAll(), 'id');
         $id = $ids ? max($ids) + 1 : 1;
-        $sql = "INSERT INTO carrusel (id, imagen, titulo, descripcion, activo) VALUES ($id, '$_objeto->imagen', '$_objeto->titulo', '$_objeto->descripcion', $_objeto->activo ? 1 : 0);";
-        $rs = [];
-        try {
-            $rs = mysqli_query($con->getConnection(), $sql);
-        } catch (\Throwable $th) {
-            $rs = null;
-        }
-        $con->closeConnection();
-        if ($rs) {
-            return true;
-        }
-        return null;
-    }
-    
-    public function patchOnOff($_id, $_accion)
-    {
-        $con = new Conexion();
-        $sql = "UPDATE carrusel SET activo = $_accion WHERE id = $_id;";
+        $sql = "INSERT INTO nuestra_historia (id, texto, activo) VALUES ($id, '$_objeto->texto', $_objeto->activo ? 1 : 0);";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -75,10 +55,10 @@ class Controlador
         return null;
     }
 
-    public function putImagenByID($imagen, $id)
+    public function patchOnOff($id, $accion)
     {
         $con = new Conexion();
-        $sql = "UPDATE carrusel SET imagen = '$imagen' WHERE id = $id;";
+        $sql = "UPDATE nuestra_historia SET activo = $accion WHERE id = $id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -92,10 +72,10 @@ class Controlador
         return null;
     }
 
-    public function putTituloByID($titulo, $id)
+    public function putTextoByID($texto, $id)
     {
         $con = new Conexion();
-        $sql = "UPDATE carrusel SET titulo = '$titulo' WHERE id = $id;";
+        $sql = "UPDATE nuestra_historia SET texto = '$texto' WHERE id = $id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -109,27 +89,10 @@ class Controlador
         return null;
     }
 
-    public function putDescripcionByID($descripcion, $id)
+    public function putAll($texto, $id)
     {
         $con = new Conexion();
-        $sql = "UPDATE carrusel SET descripcion = '$descripcion' WHERE id = $id;";
-        $rs = [];
-        try {
-            $rs = mysqli_query($con->getConnection(), $sql);
-        } catch (\Throwable $th) {
-            $rs = null;
-        }
-        $con->closeConnection();
-        if ($rs) {
-            return true;
-        }
-        return null;
-    }
-
-    public function putAll($id, $imagen, $titulo, $descripcion)
-    {
-        $con = new Conexion();
-        $sql = "UPDATE carrusel SET imagen = '$imagen', titulo = '$titulo', descripcion = '$descripcion', activo WHERE id = $id;";
+        $sql = "UPDATE nuestra_historia SET texto = '$texto' WHERE id = $id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -146,7 +109,7 @@ class Controlador
     public function deleteByID($id)
     {
         $con = new Conexion();
-        $sql = "DELETE FROM carrusel WHERE id = $id;";
+        $sql = "DELETE FROM nuestra_historia WHERE id = $id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);

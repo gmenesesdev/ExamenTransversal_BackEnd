@@ -14,8 +14,8 @@ if (strlen($_parametros) > 0) {
     $_parametros = [];
 }
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE");
 header("Access-Control-Allow-Headers: Content-Type, api_key, Authorization");
+header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE");
 header("Content-Type: application/json; charset=UTF-8");
 //Authorization
 $_header = null;

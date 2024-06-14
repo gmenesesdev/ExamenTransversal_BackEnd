@@ -20,7 +20,7 @@ if (count($_parametros) > 0) {
 }
 
 if ($_version == 'v1') {
-    if ($_mantenedor == 'carrusel') {
+    if ($_mantenedor == 'proximos-entrenamientos') {
         switch ($_metodo) {
             case 'GET':
                 if ($_header == $_token_get) {

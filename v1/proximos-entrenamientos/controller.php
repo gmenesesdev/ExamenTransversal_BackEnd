@@ -1,6 +1,18 @@
 <?php
-/*-- Carrusel 
-SELECT id, imagen, titulo, descripcion, activo FROM carrusel;
+
+/*-- proximos-entrenamientos
+SELECT
+	ep.id AS 'ID Entrenamiento',
+	ep.fecha,
+	ep.hora,
+	el.id AS 'ID Lugar',
+	el.nombre,
+	el.direccion,
+	el.comuna,
+	ep.activo 
+FROM
+	entrenamientos_proximos ep
+	LEFT JOIN entrenamiento_lugar el ON ep.entrenamiento_lugar_id = el.id;
 */
 class Controlador
 {
@@ -11,28 +23,46 @@ class Controlador
         $this->lista = [];
     }
 
-    // Obtener todos los datos de carusel
     public function getAll()
     {
         $con = new Conexion();
         $conn = $con->getConnection();
-        $sql = 'SELECT id, imagen, titulo, descripcion, activo FROM	carrusel;';
+        $sql = "SELECT 
+                    ep.id AS id_entrenamiento, 
+                    ep.fecha, 
+                    ep.hora, 
+                    el.id AS id_lugar, 
+                    el.nombre,
+                    el.direccion,
+                    el.comuna,
+                    ep.activo 
+                FROM entrenamientos_proximos ep 
+                LEFT JOIN entrenamiento_lugar el ON ep.entrenamiento_lugar_id = el.id;";
         $result = mysqli_query($conn, $sql);
         if ($result) {
-            $carrusel = [];
+            $entrenamientos = [];
             while ($row = mysqli_fetch_assoc($result)) {
-                $carrusel_id = $row['id'];
-                if (!isset($carrusel[$carrusel_id])) {
-                    $carrusel[$carrusel_id] = [
-                        "id" => $row["id"],
-                        "imagen" => $row["imagen"],
-                        "titulo" => $row["titulo"],
-                        "descripcion" => $row["descripcion"],
+                $id_entrenamiento = $row['id_entrenamiento'];
+                if (!isset($entrenamientos[$id_entrenamiento])) {
+                    $entrenamientos[$id_entrenamiento] = [
+                        "id" => $row["id_entrenamiento"],
+                        "momento" => [
+                            "fecha" => $row["fecha"],
+                            "horario" => $row["hora"]
+                        ],
+                        "lugar" => [
+                            "id" => $row["id_lugar"],
+                            "nombre" => $row["nombre"],
+                            "direccion" => [
+                                "calle" => $row["direccion"],
+                                "comuna" => $row["comuna"]
+                            ]
+                        ],
                         "activo" => $row["activo"] == 1 ? true : false
                     ];
                 }
             }
-            $this->lista = array_values($carrusel);
+            $this->lista = array_values($entrenamientos);
             mysqli_free_result($result);
         }
         $con->closeConnection();
@@ -44,7 +74,7 @@ class Controlador
         $con = new Conexion();
         $ids = array_column($this->getAll(), 'id');
         $id = $ids ? max($ids) + 1 : 1;
-        $sql = "INSERT INTO carrusel (id, imagen, titulo, descripcion, activo) VALUES ($id, '$_objeto->imagen', '$_objeto->titulo', '$_objeto->descripcion', $_objeto->activo ? 1 : 0);";
+        $sql = "INSERT INTO entrenamientos_proximos (id, fecha, hora, entrenamiento_lugar_id, activo) VALUES ($id, '$_objeto->fecha', '$_objeto->hora', $_objeto->entrenamiento_lugar_id, $_objeto->activo ? 1 : 0);";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -57,11 +87,11 @@ class Controlador
         }
         return null;
     }
-    
+
     public function patchOnOff($_id, $_accion)
     {
         $con = new Conexion();
-        $sql = "UPDATE carrusel SET activo = $_accion WHERE id = $_id;";
+        $sql = "UPDATE entrenamientos_proximos SET activo = $_accion WHERE id = $_id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -75,10 +105,10 @@ class Controlador
         return null;
     }
 
-    public function putImagenByID($imagen, $id)
+    public function putFechaByID($fecha, $id)
     {
         $con = new Conexion();
-        $sql = "UPDATE carrusel SET imagen = '$imagen' WHERE id = $id;";
+        $sql = "UPDATE entrenamientos_proximos SET fecha = '$fecha' WHERE id = $id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -92,10 +122,10 @@ class Controlador
         return null;
     }
 
-    public function putTituloByID($titulo, $id)
+    public function putHoraByID($hora, $id)
     {
         $con = new Conexion();
-        $sql = "UPDATE carrusel SET titulo = '$titulo' WHERE id = $id;";
+        $sql = "UPDATE entrenamientos_proximos SET hora = '$hora' WHERE id = $id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -109,10 +139,10 @@ class Controlador
         return null;
     }
 
-    public function putDescripcionByID($descripcion, $id)
+    public function putLugarByID($lugar, $id)
     {
         $con = new Conexion();
-        $sql = "UPDATE carrusel SET descripcion = '$descripcion' WHERE id = $id;";
+        $sql = "UPDATE entrenamientos_proximos SET entrenamiento_lugar_id = $lugar WHERE id = $id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -126,10 +156,10 @@ class Controlador
         return null;
     }
 
-    public function putAll($id, $imagen, $titulo, $descripcion)
+    public function putAll($id, $fecha, $hora, $lugar)
     {
         $con = new Conexion();
-        $sql = "UPDATE carrusel SET imagen = '$imagen', titulo = '$titulo', descripcion = '$descripcion', activo WHERE id = $id;";
+        $sql = "UPDATE entrenamientos_proximos SET fecha = '$fecha', hora = '$hora', entrenamiento_lugar_id = $lugar WHERE id = $id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -143,10 +173,10 @@ class Controlador
         return null;
     }
 
-    public function deleteByID($id)
+    public function deleteByID($_id)
     {
         $con = new Conexion();
-        $sql = "DELETE FROM carrusel WHERE id = $id;";
+        $sql = "DELETE FROM entrenamientos_proximos WHERE id = $_id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
