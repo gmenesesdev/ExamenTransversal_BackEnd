@@ -21,18 +21,18 @@ FROM
 
 class Controlador
 {
-    private $lista;
+	private $lista;
 
-    public function __construct()
-    {
-        $this->lista = [];
-    }
+	public function __construct()
+	{
+		$this->lista = [];
+	}
 
-    public function getAll()
-    {
-        $con = new Conexion();
-        $conn = $con->getConnection();
-        $sql = "SELECT
+	public function getAll()
+	{
+		$con = new Conexion();
+		$conn = $con->getConnection();
+		$sql = "SELECT
 					j.id,
 					CONCAT( j.nombre, ' ', j.apellido ) AS nombre_jugador,
 					j.profesion,
@@ -74,13 +74,32 @@ class Controlador
 			mysqli_free_result($result);
 		}
 		$con->closeConnection();
-        return $this->lista;
+		return $this->lista;
+	}
+
+	public function postNewPlayer($_objeto)
+	{
+		$con = new Conexion();
+		$ids = array_column($this->getAll(), 'id');
+		$id = $ids ? max($ids) + 1 : 1;
+		$sql = "INSERT INTO jugador (id, nombre, apellido, profesion, posicion_id, activo) VALUES ($id,'$_objeto->nombre','$_objeto->apellido','$_objeto->profesion',$_objeto->posicion_id,'$_objeto->activo ? 1 : 0');";
+		$rs = [];
+		try {
+			$rs = mysqli_query($con->getConnection(), $sql);
+		} catch (\Throwable $th) {
+			$rs = null;
+		}
+		$con->closeConnection();
+		if ($rs) {
+			return true;
+		}
+		return null;
 	}
 
 	public function patchOnOff($id, $accion)
 	{
 		$con = new Conexion();
-		$sql = "UPDATE jugador SET activo = $accion WHERE id = $id;";
+		$sql = "UPDATE jugador SET activo = '$accion' WHERE id = $id;";
 		$rs = [];
 		try {
 			$rs = mysqli_query($con->getConnection(), $sql);
@@ -148,7 +167,7 @@ class Controlador
 	public function putPosicionByID($id, $posicion)
 	{
 		$con = new Conexion();
-		$sql = "UPDATE jugador SET posicion_id = $posicion WHERE id = $id;";
+		$sql = "UPDATE jugador SET posicion_id = '$posicion' WHERE id = $id;";
 		$rs = [];
 		try {
 			$rs = mysqli_query($con->getConnection(), $sql);
@@ -165,7 +184,7 @@ class Controlador
 	public function putAll($id, $nombre, $apellido, $profesion, $posicion)
 	{
 		$con = new Conexion();
-		$sql = "UPDATE jugador SET nombre = '$nombre', apellido = '$apellido', profesion = '$profesion', posicion_id = $posicion WHERE id = $id;";
+		$sql = "UPDATE jugador SET nombre = '$nombre', apellido = '$apellido', profesion = '$profesion', posicion_id = '$posicion' WHERE id = $id;";
 		$rs = [];
 		try {
 			$rs = mysqli_query($con->getConnection(), $sql);

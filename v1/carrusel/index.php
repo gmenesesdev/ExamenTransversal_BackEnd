@@ -90,8 +90,12 @@ if ($_version == 'v1') {
                     include_once '../conexion.php';
                     $control = new Controlador();
                     $objeto = json_decode(file_get_contents("php://input", true));
-                    var_dump($objeto);
                     switch (true) {
+                        case property_exists($objeto, 'imagen') && $objeto->imagen && property_exists($objeto, 'titulo') && $objeto->titulo && property_exists($objeto, 'descripcion') && $objeto->descripcion:
+                            $rs = $control->putAll($objeto->imagen, $objeto->titulo, $objeto->descripcion, $objeto->id);
+                            http_response_code(200);
+                            echo json_encode(["data" => $rs]);
+                            break;
                         case property_exists($objeto, 'imagen') && $objeto->imagen:
                             $rs = $control->putImagenByID($objeto->imagen, $objeto->id);
                             http_response_code(200);

@@ -46,7 +46,7 @@ class Controlador
         $logo_color = $_objeto->logo_color;
         $descripcion = $_objeto->descripcion;
         $activo = $_objeto->activo ? 1 : 0;
-        $sql = "INSERT INTO sobre_nosotros (id, logo_color, descripcion, activo) VALUES ($id, '$logo_color', $descripcion, $activo);";
+        $sql = "INSERT INTO sobre_nosotros (id, logo_color, descripcion, activo) VALUES ($id, '$logo_color', '$descripcion', $activo);";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);

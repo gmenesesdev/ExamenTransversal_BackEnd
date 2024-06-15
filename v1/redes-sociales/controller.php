@@ -45,11 +45,9 @@ class Controlador
         $con = new Conexion();
         $ids = array_column($this->getAll(), 'id');
         $id = $ids ? max($ids) + 1 : 1;
-        $nombre = $_objeto->nombre;
-        $icono = $_objeto->icono;
-        $valor = $_objeto->valor;
         $activo = $_objeto->activo ? 1 : 0;
-        $sql = "INSERT INTO redes_sociales (id, nombre, icono, valor, activo) VALUES ($id, '$nombre', '$icono', $valor, $activo);";
+        $sql = "INSERT INTO redes_sociales (id, nombre, icono, valor, activo) VALUES ($id, '$_objeto->nombre', '$_objeto->icono', '$_objeto->valor', $activo);";
+        var_dump($sql);
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -134,7 +132,7 @@ class Controlador
     public function putAll($id, $nombre, $icono, $valor)
     {
         $con = new Conexion();
-        $sql = "UPDATE redes_sociales SET nombre = '$nombre', icono = '$icono', valor = $valor WHERE id = $id;";
+        $sql = "UPDATE redes_sociales SET nombre = '$nombre', icono = '$icono', valor = '$valor' WHERE id = $id;";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);

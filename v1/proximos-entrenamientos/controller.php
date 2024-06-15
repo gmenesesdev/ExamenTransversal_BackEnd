@@ -2,10 +2,10 @@
 
 /*-- proximos-entrenamientos
 SELECT
-	ep.id AS 'ID Entrenamiento',
+	ep.id AS 'id_entrenamiento',
 	ep.fecha,
 	ep.hora,
-	el.id AS 'ID Lugar',
+	el.id AS 'id_lugar',
 	el.nombre,
 	el.direccion,
 	el.comuna,
@@ -69,12 +69,12 @@ class Controlador
         return $this->lista;
     }
 
-    public function postNew($_objeto)
+    public function postNewEntrenamiento($_objeto)
     {
         $con = new Conexion();
         $ids = array_column($this->getAll(), 'id');
         $id = $ids ? max($ids) + 1 : 1;
-        $sql = "INSERT INTO entrenamientos_proximos (id, fecha, hora, entrenamiento_lugar_id, activo) VALUES ($id, '$_objeto->fecha', '$_objeto->hora', $_objeto->entrenamiento_lugar_id, $_objeto->activo ? 1 : 0);";
+        $sql = "INSERT INTO entrenamientos_proximos (id, fecha, hora, entrenamiento_lugar_id, activo) VALUES ($id, '$_objeto->fecha', '$_objeto->hora', '$_objeto->entrenamiento_lugar_id', '$_objeto->activo ? 1 : 0');";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
@@ -105,7 +105,7 @@ class Controlador
         return null;
     }
 
-    public function putFechaByID($fecha, $id)
+    public function putFechaByID($id, $fecha)
     {
         $con = new Conexion();
         $sql = "UPDATE entrenamientos_proximos SET fecha = '$fecha' WHERE id = $id;";
@@ -122,7 +122,7 @@ class Controlador
         return null;
     }
 
-    public function putHoraByID($hora, $id)
+    public function putHoraByID($id, $hora)
     {
         $con = new Conexion();
         $sql = "UPDATE entrenamientos_proximos SET hora = '$hora' WHERE id = $id;";
@@ -139,7 +139,7 @@ class Controlador
         return null;
     }
 
-    public function putLugarByID($lugar, $id)
+    public function putLugarByID($id, $lugar)
     {
         $con = new Conexion();
         $sql = "UPDATE entrenamientos_proximos SET entrenamiento_lugar_id = $lugar WHERE id = $id;";

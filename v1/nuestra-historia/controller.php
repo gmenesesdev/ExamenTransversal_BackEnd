@@ -41,7 +41,7 @@ class Controlador
         $con = new Conexion();
         $ids = array_column($this->getAll(), 'id');
         $id = $ids ? max($ids) + 1 : 1;
-        $sql = "INSERT INTO nuestra_historia (id, texto, activo) VALUES ($id, '$_objeto->texto', $_objeto->activo ? 1 : 0);";
+        $sql = "INSERT INTO nuestra_historia (id, texto, activo) VALUES ($id, '$_objeto->texto', '$_objeto->activo ? 1 : 0');";
         $rs = [];
         try {
             $rs = mysqli_query($con->getConnection(), $sql);
