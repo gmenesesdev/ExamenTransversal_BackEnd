@@ -46,7 +46,8 @@ if ($_version == 'v1') {
                         http_response_code(201);
                         echo json_encode(["data" => $rs]);
                     } else if ($rs === false) {
-                        echo "ID repetido";
+                        echo json_encode(["Error" => "ID ya existe"]);
+                        http_response_code(409);
                     } else {
                         echo json_encode(["Error" => "Error al crear Carrusel"]);
                         http_response_code(409);
